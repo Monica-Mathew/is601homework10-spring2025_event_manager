@@ -18,6 +18,7 @@ from builtins import range
 from datetime import datetime, timedelta
 from unittest.mock import patch
 from uuid import uuid4
+import uuid
 
 # Third-party imports
 import pytest
@@ -230,6 +231,7 @@ async def manager_user(db_session: AsyncSession):
 def user_base_data():
     return {
         "username": "john_doe_123",
+        "nickname": "john_doe_123",
         "email": "john.doe@example.com",
         "full_name": "John Doe",
         "bio": "I am a software engineer with over 5 years of experience.",
@@ -256,6 +258,7 @@ def user_update_data():
     return {
         "email": "john.doe.new@example.com",
         "full_name": "John H. Doe",
+        "first_name": "John H.",
         "bio": "I specialize in backend development with Python and Node.js.",
         "profile_picture_url": "https://example.com/profile_pictures/john_doe_updated.jpg"
     }
@@ -263,7 +266,7 @@ def user_update_data():
 @pytest.fixture
 def user_response_data():
     return {
-        "id": "unique-id-string",
+        "id": uuid.uuid4(), 
         "username": "testuser",
         "email": "test@example.com",
         "last_login_at": datetime.now(),
@@ -274,4 +277,4 @@ def user_response_data():
 
 @pytest.fixture
 def login_request_data():
-    return {"username": "john_doe_123", "password": "SecurePassword123!"}
+    return {"username": "john_doe_123", "email": "john.doe@example.com", "password": "SecurePassword123!"}
