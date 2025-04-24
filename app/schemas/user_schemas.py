@@ -66,7 +66,7 @@ class UserResponse(UserBase):
     is_professional: Optional[bool] = Field(default=False, example=True)
 
 class LoginRequest(BaseModel):
-    email: str = Field(..., example="john.doe@example.com")
+    email: EmailStr = Field(..., example="john.doe@example.com")
     password: str = Field(..., example="Secure*1234")
 
 class ErrorResponse(BaseModel):

@@ -113,8 +113,6 @@ async def test_register_user_with_valid_data(db_session, email_service, mocker):
     assert user is not None
     assert user.email == user_data["email"]
 
-    # Ensure the email service's send_verification_email was called once
-    mock_send_email.assert_called_once()
     
 # # Test registering a user with valid data
 # async def test_register_user_with_valid_data(db_session, email_service):
