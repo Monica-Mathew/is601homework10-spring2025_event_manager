@@ -202,7 +202,7 @@ async def register(user_data: UserCreate, session: AsyncSession = Depends(get_db
         
         user = await UserService.register_user(session, user_data.model_dump(), email_service)
     except ValueError as e:
-        print(f"Validation Error: {e}")
+        raise HTTPException(status_code=400, detail="Email not valid")
     if user:
         return user
     raise HTTPException(status_code=400, detail="Email already exists")

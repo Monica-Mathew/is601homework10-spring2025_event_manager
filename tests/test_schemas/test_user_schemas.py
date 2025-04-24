@@ -81,6 +81,32 @@ def test_invalid_email_validation(invalid_email):
         LoginRequest(email=invalid_email, password="Secure*1234")
 
 
+def test_user_create_valid_email():
+    data = {
+        "email": "John.Doe@Example.com",
+        "password": "Secure*1234"  # still required to instantiate
+    }
+    user = UserCreate(**data)
+    assert user.email == "john.doe@example.com"
+
+def test_user_create_invalid_email_format():
+    data = {
+        "email": "invalid-email",
+        "password": "Secure*1234"
+    }
+    with pytest.raises(ValidationError) as exc_info:
+        UserCreate(**data)
+    assert "Invalid email format" in str(exc_info.value)
+
+def test_user_create_blank_email():
+    data = {
+        "email": "",
+        "password": "Secure*1234"
+    }
+    with pytest.raises(ValidationError) as exc_info:
+        UserCreate(**data)
+    assert "Invalid email format" in str(exc_info.value)
+    
 def test_valid_passwords():
     valid_passwords = [
         "Secure*1234",  # valid password with all requirements
