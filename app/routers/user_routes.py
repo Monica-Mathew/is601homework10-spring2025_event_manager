@@ -193,12 +193,9 @@ async def list_users(
 
 @router.post("/register/", response_model=UserResponse, tags=["Login and Registration"])
 async def register(user_data: UserCreate, session: AsyncSession = Depends(get_db), email_service: EmailService = Depends(get_email_service)):
-    # Ensure role is passed as a valid enum value
-    user_data_dict = user_data.dict()  # Convert to dictionary
-    user_data_dict['role'] = UserRole[user_data.role]  # Map string to enum if necessary
     try:
         
-        user = await UserService.register_user(session, user_data_dict, email_service)
+        user = await UserService.register_user(session, user_data.model_dump(), email_service)
     except ValueError as e:
         print(f"Validation Error: {e}")
     if user:
