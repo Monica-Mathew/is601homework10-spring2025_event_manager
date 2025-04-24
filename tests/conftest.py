@@ -50,6 +50,15 @@ async def user_token(verified_user):
         return create_access_token(data={"sub": verified_user.email, "role": str(verified_user.role.name)},
             expires_delta=timedelta(minutes=10))
 
+@pytest.fixture
+async def manager_token(verified_user):
+        return create_access_token(data={"sub": verified_user.email, "role": "MANAGER",},
+            expires_delta=timedelta(minutes=10))
+
+@pytest.fixture
+async def admin_token(verified_user):
+        return create_access_token(data={"sub": verified_user.email, "role": "ADMIN",},
+            expires_delta=timedelta(minutes=10))
 
 @pytest.fixture
 def email_service():
