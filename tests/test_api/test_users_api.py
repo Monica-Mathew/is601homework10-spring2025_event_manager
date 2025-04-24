@@ -6,6 +6,9 @@ from app.models.user_model import User
 from app.utils.nickname_gen import generate_nickname
 from app.utils.security import hash_password
 from app.services.jwt_service import decode_token  # Import your FastAPI app
+import pytest
+from app.services.jwt_service import decode_token
+from urllib.parse import urlencode
 
 # Example of a test function using the async_client fixture
 @pytest.mark.asyncio
@@ -96,6 +99,18 @@ async def test_create_user_duplicate_email(async_client, verified_user):
     assert "Email already exists" in response.json().get("detail", "")
 
 @pytest.mark.asyncio
+async def test_register_invalid_email_format(async_client):
+    user_data = {
+        "email": "not-an-email",
+        "password": "Secure*1234"
+    }
+    response = await async_client.post("/register/", json=user_data)
+    assert response.status_code == 422
+    errors = response.json().get("detail", [])
+    assert any("Invalid email format" in err["msg"] for err in errors)
+
+
+@pytest.mark.asyncio
 async def test_create_user_invalid_email(async_client):
     user_data = {
         "email": "notanemail",
@@ -104,9 +119,62 @@ async def test_create_user_invalid_email(async_client):
     response = await async_client.post("/register/", json=user_data)
     assert response.status_code == 422
 
-import pytest
-from app.services.jwt_service import decode_token
-from urllib.parse import urlencode
+valid_emails = [
+    "user@example.com",
+    "user.name@example.co.uk",
+    "user_name+123@example.io",
+    "user-name@example-domain.com",
+    "USER@EXAMPLE.COM",
+    "user123@sub.example.com"
+]
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("email", valid_emails)
+async def test_register_valid_emails(async_client, email):
+    user_data = {
+        "email": email,
+        "password": "StrongPass123!"  
+    }
+
+    response = await async_client.post("/register/", json=user_data)
+    assert response.status_code == 200, f"Failed for email: {email}"
+
+    response_data = response.json()
+    assert "email" in response_data
+    assert response_data["email"] == email.lower().strip()
+
+invalid_emails = [
+    "plainaddress",               # No @
+    "@no-local-part.com",        # No local part (before the @)
+    "user@.com",                 # No domain name after @
+    "user@com",                  # No dot in domain
+    "user@com.",                 # Ends with dot in domain
+    "user@@example.com",         # Double @
+    "user example@example.com",  # Space in email
+    "user@example..com",         # Double dot in domain part
+    "user@example.com (Joe)",    # Email with spaces and other characters
+    "",                          # Empty email string
+    "   ",                       # Just spaces
+    "user@-example.com",         # Invalid domain starts with a hyphen
+    "user@sub.-example.com"      # Invalid domain with a hyphen in the middle
+]
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("email", invalid_emails)
+async def test_register_invalid_emails(async_client, email):
+    user_data = {
+        "email": email,
+        "password": "SecurePass123!"  # Assumed valid password for testing
+    }
+
+    response = await async_client.post("/register/", json=user_data)
+    
+    assert response.status_code == 422, f"Failed for email: {email}"
+    response_data = response.json()
+    assert "detail" in response_data  # Error details should be in 'detail'
+    assert any("Invalid email format" in err["msg"] for err in response_data["detail"])
+
+
 
 @pytest.mark.asyncio
 async def test_login_success(async_client, verified_user):

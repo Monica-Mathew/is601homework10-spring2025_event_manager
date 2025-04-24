@@ -49,7 +49,15 @@ def validate_password_complexity(password: str):
     return password
 
 def validate_email(email: str) -> str:
-    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+    pattern = (
+        r"^(?!.*\.\.)"                      # no double dots
+        r"[a-zA-Z0-9_.+-]+"                 # local part
+        r"@"
+        r"(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+"  # domain parts (no leading/trailing hyphens)
+        r"[a-zA-Z]{2,}$"                    # top-level domain
+    )
+    
+    if not re.match(pattern, email):
         raise ValueError("Invalid email format.")
     return email.lower().strip()  
 
