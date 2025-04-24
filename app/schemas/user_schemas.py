@@ -48,10 +48,16 @@ def validate_password_complexity(password: str):
         )
     return password
 
+def validate_email(email: str) -> str:
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        raise ValueError("Invalid email format.")
+    return email.lower().strip()  
+
 class UserCreate(UserBase):
     email: EmailStr = Field(..., example="john.doe@example.com")
     password: str = Field(..., example="Secure*1234")
     _validate_password = validator('password', pre=True, allow_reuse=True)(validate_password_complexity)
+    _validate_email = validator('email', pre=True, allow_reuse=True)(validate_email)
 
 class UserUpdate(UserBase):
     email: Optional[EmailStr] = Field(None, example="john.doe@example.com")
