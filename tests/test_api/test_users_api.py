@@ -51,6 +51,30 @@ async def test_update_user_email_access_allowed(async_client, admin_user, admin_
     assert response.status_code == 200
     assert response.json()["email"] == updated_data["email"]
 
+@pytest.mark.asyncio
+async def test_create_user_invalid_password(async_client):
+    # Invalid password (too short and missing complexity)
+    user_data = {
+        "email": "valid@example.com",
+        "password": "short",  # Invalid password (no uppercase, no special characters, too short)
+    }
+    response = await async_client.post("/register/", json=user_data)
+    assert response.status_code == 422  # Expecting validation error
+    assert "detail" in response.json()
+    assert "Password must be at least 8 characters long" in response.json()["detail"][0]["msg"]
+
+@pytest.mark.asyncio
+async def test_create_user_valid_password(async_client):
+    # Valid password (meets complexity)
+    user_data = {
+        "email": "valid@example.com",
+        "password": "ValidPassword123!",  # Valid password (contains uppercase, lowercase, number, special character)
+    }
+    response = await async_client.post("/register/", json=user_data)
+    assert response.status_code == 200  # Expecting success
+    assert "email" in response.json()  # Expecting a successful user response
+    assert response.json()["email"] == user_data["email"]
+
 
 @pytest.mark.asyncio
 async def test_delete_user(async_client, admin_user, admin_token):
