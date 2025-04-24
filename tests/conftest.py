@@ -127,6 +127,7 @@ async def locked_user(db_session):
 @pytest.fixture(scope="function")
 async def user(db_session):
     user_data = {
+        "id":uuid.uuid4(),
         "nickname": fake.user_name(),
         "first_name": fake.first_name(),
         "last_name": fake.last_name(),

@@ -21,6 +21,8 @@ Key Highlights:
 from builtins import dict, int, len, str
 from datetime import timedelta
 from uuid import UUID
+
+from pydantic import ValidationError
 from app.models.user_model import UserRole
 from fastapi import APIRouter, Depends, HTTPException, Response, status, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -88,7 +90,10 @@ async def update_user(user_id: UUID, user_update: UserUpdate, request: Request, 
     - **user_update**: UserUpdate model with updated user information.
     """
     user_data = user_update.model_dump(exclude_unset=True)
-    updated_user = await UserService.update(db, user_id, user_data)
+    try:
+        updated_user = await UserService.update(db, user_id, user_data)
+    except ValidationError as e:
+        print(f"Validation Error: {e}")
     if not updated_user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 

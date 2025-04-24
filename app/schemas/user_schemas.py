@@ -1,5 +1,5 @@
 from builtins import ValueError, any, bool, str
-from pydantic import BaseModel, EmailStr, Field, ValidationError, validator, root_validator
+from pydantic import BaseModel, EmailStr, Field, HttpUrl, ValidationError, validator, root_validator
 from typing import Optional, List
 from datetime import datetime
 from enum import Enum
@@ -30,9 +30,9 @@ class UserBase(BaseModel):
     first_name: Optional[str] = Field(None, example="John")
     last_name: Optional[str] = Field(None, example="Doe")
     bio: Optional[str] = Field(None, example="Experienced software developer specializing in web applications.")
-    profile_picture_url: Optional[str] = Field(None, example="https://example.com/profiles/john.jpg")
-    linkedin_profile_url: Optional[str] =Field(None, example="https://linkedin.com/in/johndoe")
-    github_profile_url: Optional[str] = Field(None, example="https://github.com/johndoe")
+    profile_picture_url: Optional[HttpUrl] = Field(None, example="https://example.com/profiles/john.jpg")
+    linkedin_profile_url: Optional[HttpUrl] =Field(None, example="https://linkedin.com/in/johndoe")
+    github_profile_url: Optional[HttpUrl] = Field(None, example="https://github.com/johndoe")
     role: Optional[UserRole] = Field(None, example="ANONYMOUS")
     _validate_urls = validator('profile_picture_url', 'linkedin_profile_url', 'github_profile_url', pre=True, allow_reuse=True)(validate_url)
  
@@ -62,10 +62,12 @@ class UserUpdate(UserBase):
     profile_picture_url: Optional[str] = Field(None, example="https://example.com/profiles/john.jpg")
     linkedin_profile_url: Optional[str] =Field(None, example="https://linkedin.com/in/johndoe")
     github_profile_url: Optional[str] = Field(None, example="https://github.com/johndoe")
+    _validate_urls = validator('profile_picture_url', 'linkedin_profile_url', 'github_profile_url', pre=True, allow_reuse=True)(validate_url)
+
 
     @root_validator(pre=True)
-    def check_at_least_one_value(cls, values):
-        if not any(values.values()):
+    def at_least_one_field(cls, values):
+        if not any(v not in [None] for v in values.values()):
             raise ValueError("At least one field must be provided for update")
         return values
 
