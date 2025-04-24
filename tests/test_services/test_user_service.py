@@ -1,5 +1,6 @@
 from builtins import range
 from unittest.mock import AsyncMock
+from pydantic import ValidationError
 import pytest
 from sqlalchemy import select
 from app.dependencies import get_settings
@@ -181,3 +182,62 @@ async def test_unlock_user_account(db_session, locked_user):
     assert unlocked, "The account should be unlocked"
     refreshed_user = await UserService.get_by_id(db_session, locked_user.id)
     assert not refreshed_user.is_locked, "The user should no longer be locked"
+
+@pytest.mark.asyncio
+async def test_update_bio_only(db_session, user):
+    updated_bio = "Updated developer bio."
+    updated_user = await UserService.update(db_session, user.id, {"bio": updated_bio})
+    assert updated_user is not None
+    assert updated_user.bio == updated_bio
+
+@pytest.mark.asyncio
+async def test_update_profile_picture_only(db_session, user):
+    new_url = "https://example.com/new_profile_pic.jpg"
+    updated_user = await UserService.update(db_session, user.id, {"profile_picture_url": new_url})
+    assert updated_user is not None
+    assert updated_user.profile_picture_url == new_url
+
+@pytest.mark.asyncio
+async def test_update_bio_and_profile_picture(db_session, user):
+    data = {
+        "bio": "Multi-field update.",
+        "profile_picture_url": "https://example.com/combined_update.jpg"
+    }
+    updated_user = await UserService.update(db_session, user.id, data)
+    assert updated_user is not None
+    assert updated_user.bio == data["bio"]
+    assert updated_user.profile_picture_url == data["profile_picture_url"]
+
+@pytest.mark.asyncio
+async def test_update_bio_alone(db_session, user):
+    updated_user = await UserService.update(db_session, user.id, {"bio": "new_bio"})
+    assert updated_user is not None
+    assert updated_user.bio == "new_bio"
+
+@pytest.mark.asyncio
+async def test_update_with_valid_profile_picture_url(db_session, user):
+    try:
+            await UserService.update(db_session, user.id, {"profile_picture_url": "123"})
+    except ValidationError as e:
+            pytest.fail("Error: {e}")
+
+        
+
+@pytest.mark.asyncio
+async def test_update_with_null_values(db_session, user):
+    data = {
+        "bio": None,
+        "profile_picture_url": 'https://linkedin.com/in/johndoe'
+    }
+    updated_user = await UserService.update(db_session, user.id, data)
+    assert updated_user is not None
+    assert updated_user.bio is None
+    assert updated_user.profile_picture_url is not None
+
+@pytest.mark.asyncio
+async def test_update_with_no_profile_fields(db_session, user):
+    updated_user = await UserService.update(db_session, user.id, {"first_name": "UpdatedOnly"})
+    assert updated_user is not None
+    assert updated_user.first_name == "UpdatedOnly"
+    assert updated_user.bio == user.bio
+    assert updated_user.profile_picture_url == user.profile_picture_url
