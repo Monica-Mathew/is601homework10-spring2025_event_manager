@@ -79,3 +79,60 @@ def test_invalid_email_validation(invalid_email):
     # Attempt to create LoginRequest with an invalid email
     with pytest.raises(ValidationError):
         LoginRequest(email=invalid_email, password="Secure*1234")
+
+
+def test_valid_passwords():
+    valid_passwords = [
+        "Secure*1234",  # valid password with all requirements
+        "Another$Valid1",  # uppercase, lowercase, digit, special char
+        "A@1strongpass",  # valid but boundary test with 8 chars
+        "StrongPassword123!"  # valid with uppercase, lowercase, number, special char
+    ]
+    
+    for password in valid_passwords:
+        try:
+            user = UserCreate(email="test@example.com", password=password)
+            assert user.password == password  # If valid, this should not raise an error
+        except ValidationError as e:
+            pytest.fail(f"Validation failed for valid password: {password}. Error: {e}")
+
+def test_invalid_passwords():
+    invalid_passwords = [
+        "short1@",  # Too short (less than 8 chars)
+        "nouppercase1@",  # Missing uppercase letter
+        "NOLOWERCASE1@",  # Missing lowercase letter
+        "NoNumber@Char",  # Missing digit
+        "NoSpecialChar123",  # Missing special character
+        "12345678",  # No letters or special characters
+        "password",  # No uppercase, digit, or special character
+        ""  # Empty password
+    ]
+    
+    for password in invalid_passwords:
+        with pytest.raises(ValidationError) as excinfo:
+            UserCreate(email="test@example.com", password=password)
+        assert "Password must be at least 8 characters long" in str(excinfo.value)
+        assert "contain at least one uppercase letter" in str(excinfo.value) or \
+               "contain at least one lowercase letter" in str(excinfo.value) or \
+               "contain at least one number" in str(excinfo.value) or \
+               "contain at least one special character" in str(excinfo.value)
+
+def test_edge_case_passwords():
+    edge_case_passwords = [
+        "A1@bbbb2",  # Exactly 8 characters long, valid
+        "Z1@short",  # Exactly 8 characters, valid
+        "A@1bbbCde"  # Exactly 8 characters, valid
+    ]
+    
+    for password in edge_case_passwords:
+        try:
+            user = UserCreate(email="test@example.com", password=password)
+            assert user.password == password  # If valid, this should not raise an error
+        except ValidationError as e:
+            pytest.fail(f"Edge case failed for password: {password}. Error: {e}")
+
+def test_empty_password():
+    with pytest.raises(ValidationError) as excinfo:
+        UserCreate(email="test@example.com", password="")
+    assert "Password must be at least 8 characters long" in str(excinfo.value)
+
