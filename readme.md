@@ -39,6 +39,8 @@ Welcome to the Event Manager Company! As a newly hired Software QA Analyst/Devel
   
   As for the end to end development, using comprehensive unit test to test out the edge cases helped in catching issues missed out in manual testing on UI, this shows the importance of writing clean and testable code. I myself found writing test cases as a difficult task, but edge test cases would help to pinpoint how much efficent and robust the code is. Overall I find this assignment very interesting and gave me full exposure to the Python web api development.
 
+---
+---
 
 ## Assignment Objectives
 
