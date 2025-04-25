@@ -1,5 +1,6 @@
 import asyncio
 from builtins import str
+from unittest.mock import patch
 import pytest
 from httpx import AsyncClient
 from app.main import app
@@ -68,15 +69,19 @@ async def test_create_user_invalid_password(async_client):
     assert "Password must be at least 8 characters long" in response.json()["detail"][0]["msg"]
 
 @pytest.mark.asyncio
-async def test_create_user_valid_password(async_client):
-    # Valid password (meets complexity)
+@patch("app.services.email_service.EmailService.send_verification_email")
+async def test_create_user_valid_password(mock_send_email, async_client):
+    # Mock the send email function to prevent real SMTP call
+    mock_send_email.return_value = None
+
     user_data = {
         "email": "valid@example.com",
-        "password": "ValidPassword123!",  # Valid password (contains uppercase, lowercase, number, special character)
+        "password": "ValidPassword123!",
     }
     response = await async_client.post("/register/", json=user_data)
-    assert response.status_code == 200  # Expecting success
-    assert "email" in response.json()  # Expecting a successful user response
+
+    assert response.status_code == 200
+    assert "email" in response.json()
     assert response.json()["email"] == user_data["email"]
 
 
@@ -125,18 +130,21 @@ valid_emails = [
     "user.name@example.co.uk",
     "user_name+123@example.io",
     "user-name@example-domain.com",
-    # "USER@EXAMPLE.COM", Please upgrade your plan https://mailtrap.io/billing/plans/testing
-    # "user123@sub.example.com" Please upgrade your plan https://mailtrap.io/billing/plans/testing
+    "USER@EXAMPLE.COM", 
+    "user123@sub.example.com" 
 ]
+
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("email", valid_emails)
-async def test_register_valid_emails(async_client, email):
+@patch("app.services.email_service.EmailService.send_verification_email")
+async def test_register_valid_emails(mock_send_email, async_client, email):
+    mock_send_email.return_value = None  # Prevent real SMTP call
+
     user_data = {
         "email": email,
         "password": "StrongPass123!"  
     }
-
     response = await async_client.post("/register/", json=user_data)
     assert response.status_code == 200, f"Failed for email: {email}"
     response_data = response.json()
