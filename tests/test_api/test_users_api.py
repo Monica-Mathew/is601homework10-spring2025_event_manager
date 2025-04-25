@@ -1,3 +1,4 @@
+import asyncio
 from builtins import str
 import pytest
 from httpx import AsyncClient
@@ -124,8 +125,8 @@ valid_emails = [
     "user.name@example.co.uk",
     "user_name+123@example.io",
     "user-name@example-domain.com",
-    "USER@EXAMPLE.COM",
-    "user123@sub.example.com"
+    # "USER@EXAMPLE.COM", Please upgrade your plan https://mailtrap.io/billing/plans/testing
+    # "user123@sub.example.com" Please upgrade your plan https://mailtrap.io/billing/plans/testing
 ]
 
 @pytest.mark.asyncio
@@ -138,7 +139,6 @@ async def test_register_valid_emails(async_client, email):
 
     response = await async_client.post("/register/", json=user_data)
     assert response.status_code == 200, f"Failed for email: {email}"
-
     response_data = response.json()
     assert "email" in response_data
     assert response_data["email"] == email.lower().strip()
@@ -216,14 +216,14 @@ async def test_login_incorrect_password(async_client, verified_user):
     assert response.status_code == 401
     assert "Incorrect email or password." in response.json().get("detail", "")
 
-# @pytest.mark.asyncio TODO - will add back once mailtrap is finished
-# async def test_login_unverified_user(async_client, unverified_user):
-#     form_data = {
-#         "username": unverified_user.email,
-#         "password": "MySuperPassword$1234"
-#     }
-#     response = await async_client.post("/login/", data=urlencode(form_data), headers={"Content-Type": "application/x-www-form-urlencoded"})
-#     assert response.status_code == 401
+@pytest.mark.asyncio 
+async def test_login_unverified_user(async_client, unverified_user):
+    form_data = {
+        "username": unverified_user.email,
+        "password": "MySuperPassword$1234"
+    }
+    response = await async_client.post("/login/", data=urlencode(form_data), headers={"Content-Type": "application/x-www-form-urlencoded"})
+    assert response.status_code == 401
 
 @pytest.mark.asyncio
 async def test_login_locked_user(async_client, locked_user):
