@@ -230,17 +230,12 @@ async def test_update_with_valid_profile_picture_url(db_session, user):
 @pytest.mark.asyncio
 async def test_update_with_no_fields_fails(db_session, user):
     data = {}
-
-    # updated_user = await UserService.update(db_session, user.id, data)
     with pytest.raises(HTTPException) as excinfo:
         await UserService.update(db_session, user.id, data)
 
-    # Assert the exception is the one you expect
     assert excinfo.value.status_code == 400
     assert "At least one field must be provided for update" in excinfo.value.detail
-    # assert updated_user is not None
-    # assert updated_user.bio is None
-    # assert updated_user.profile_picture_url is not None
+
 
 
 @pytest.mark.asyncio
