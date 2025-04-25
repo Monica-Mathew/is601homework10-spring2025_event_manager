@@ -49,3 +49,4 @@ class Settings(BaseSettings):
 
 # Instantiate settings to be imported in your application
 settings = Settings()
+print(settings.smtp_server) 
