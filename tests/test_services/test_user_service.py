@@ -6,6 +6,7 @@ from sqlalchemy import select
 from app.dependencies import get_settings
 from app.models.user_model import User
 from app.services.user_service import UserService
+from fastapi import HTTPException
 
 pytestmark = pytest.mark.asyncio
 
@@ -73,8 +74,11 @@ async def test_update_user_valid_data(db_session, user):
 
 # Test updating a user with invalid data
 async def test_update_user_invalid_data(db_session, user):
-    updated_user = await UserService.update(db_session, user.id, {"email": "invalidemail"})
-    assert updated_user is None
+    with pytest.raises(HTTPException) as excinfo:
+        await UserService.update(db_session, user.id, {"email": "invalidemail"})
+    
+    assert excinfo.value.status_code == 400
+    assert "value is not a valid email address" in excinfo.value.detail
 
 # Test deleting a user who exists
 async def test_delete_user_exists(db_session, user):
@@ -216,12 +220,23 @@ async def test_update_bio_alone(db_session, user):
 
 @pytest.mark.asyncio
 async def test_update_with_valid_profile_picture_url(db_session, user):
-    try:
-            await UserService.update(db_session, user.id, {"profile_picture_url": "123"})
-    except ValidationError as e:
-            pytest.fail("Error: {e}")
+    with pytest.raises(HTTPException) as excinfo:
+        await UserService.update(db_session, user.id, {"profile_picture_url": "123"})
+    
+    assert excinfo.value.status_code == 400
+    assert "Invalid URL format" in excinfo.value.detail
 
         
+@pytest.mark.asyncio
+async def test_update_with_no_fields_fails(db_session, user):
+    data = {}
+    with pytest.raises(HTTPException) as excinfo:
+        await UserService.update(db_session, user.id, data)
+
+    assert excinfo.value.status_code == 400
+    assert "At least one field must be provided for update" in excinfo.value.detail
+
+
 
 @pytest.mark.asyncio
 async def test_update_with_null_values(db_session, user):
