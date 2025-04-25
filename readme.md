@@ -42,7 +42,6 @@ Welcome to the Event Manager Company! As a newly hired Software QA Analyst/Devel
 ---
 
 
-
 ## Assignment Objectives
 
 1. **Familiarize with REST API functionality and structure**: Gain hands-on experience working with a REST API, understanding its endpoints, request/response formats, and authentication mechanisms.
