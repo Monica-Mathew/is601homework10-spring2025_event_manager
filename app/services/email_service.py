@@ -9,7 +9,7 @@ class EmailService:
     def __init__(self, template_manager: TemplateManager):
         self.smtp_client = SMTPClient(
             server=settings.smtp_server,
-            port=settings.smtp_port,
+            port=int(settings.smtp_port),
             username=settings.smtp_username,
             password=settings.smtp_password
         )
