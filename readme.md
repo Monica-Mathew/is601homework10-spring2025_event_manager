@@ -30,6 +30,9 @@ Welcome to the Event Manager Company! As a newly hired Software QA Analyst/Devel
   ### Dockerhub image
   - Link to project image deployed to Dockerhub.
       [Dockerhub image - monicamathew/is601homework10](https://hub.docker.com/layers/monicamathew/is601homework10/688404ce97f69abbe53226ce206edfffb739461c/images/sha256-b2d49a53b89f8efd2f59ed019e919ccbb69037ee88b90014ef4a52f5c70175bf)
+  
+  ### Test coverage - 93% ![Test Coverage](coverage.png)
+
 
   ### Reflection
   This assignment was absolutely a great learning experience. As not having much experience with Python web development, usage of FastAPI and user authentication systems was a game changer. I was able to get hands on experience on all key components of a full stack project, including Postgres backend database for storing the CRUD operations data, and usage of Mailtrap for testing email services gave insights on production level work. Working with Pydantic and Alembic helped me to paint a better picture of FastAPI application interactions. Alembic made it easy to apply database version updates through migration strategy, and Pydantic enforced data validations for user inputs and respones. This helped in enforcing strict username/email and password validations and contributes to secure application.
