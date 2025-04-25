@@ -2,6 +2,41 @@
 
 Welcome to the Event Manager Company! As a newly hired Software QA Analyst/Developer and a student in software engineering, you are embarking on an exciting journey to contribute to our project aimed at developing a secure, robust REST API that supports JWT token-based OAuth2 authentication. This API serves as the backbone of our user management system and will eventually expand to include features for event management and registration.
 
+## Submission:
+
+ ### Issues
+  - [Issue 1 - Password Validation](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/3) 
+      Added validations to the password to make it strong, pydantic data model support custom validations to have password being 8 chars, special chars etc - [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/4/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7)
+
+  - [Issue 2 -  Email validation](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/9)
+      In this project, the email is used as username, hence we check if the email is already registered in the system (uniqueness) and we have validations to make sure the username is a valid username -  [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/10/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7)
+
+  - [Issue 3 - Profile fields update validation function](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/11)
+      Added validations for the profile field update - put endpoint - to make sure all fields can be updated, and if update is made with no inputs, validtion error would be thrown back - [app/services/user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/12/files#diff-8e8622b7fd5979ba58404f96e1fd81c5512208dee6dbe0e28390d706055864e6)
+
+   - [Issue 4 - Profile fields update edge cases tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/7)
+        Added tests to cover for the edge cases for profile fields updation, and updated the validations accordingly 
+        [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/8/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7) and [tests/test_services/test_user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/8/files#diff-e3f3da0661632e0add5f28cb40266e4bfbd6e0c1a23cdb5f5e8813af69cf1d5c)
+
+  -  [Issue 5 - Updated smtp credentials and fixed tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/17)
+      Created mailtrap account, and added credentials to the .env file and completed the UI testing. For unit tests, added mocks to stimulate the smtp mock behavior - [tests/test_services/test_user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-e3f3da0661632e0add5f28cb40266e4bfbd6e0c1a23cdb5f5e8813af69cf1d5c)
+
+  -  [Issue mentioned in the demo](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/13) 
+        Tried out with LoginRequest pydantic model, and we could fix the issue by prefilling data, but it causes issue with oauth2_scheme for authorization endpoint for admin/managers. Hence continued using OAuth2PasswordRequestForm to capture email and password. Added desciptive for login - [app/routers/user_routes.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/14/files#diff-3f00ec2c24998d185e23313c030b5256c01c3b3e611ffb10c3c9437d4fa9cf77)
+  
+  -  Github action pass and dependency issues
+        Updated [flaky tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-e52e4ddd58b7ef887ab03c04116e676f6280b824ab7469d5d3080e5cba4f2128) which were intermittently failing and medium/ critical severity vulnerabilities [dependencies](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-4d7c51b1efe9043e44439a949dfd92e5827321b34082903477fd04876edb7552)
+
+  ### Dockerhub image
+  - Link to project image deployed to Dockerhub.
+      [Dockerhub image - monicamathew/is601homework10](https://hub.docker.com/layers/monicamathew/is601homework10/688404ce97f69abbe53226ce206edfffb739461c/images/sha256-b2d49a53b89f8efd2f59ed019e919ccbb69037ee88b90014ef4a52f5c70175bf)
+
+  ### Reflection
+  This assignment was absolutely a great learning experience. As not having much experience with Python web development, usage of FastAPI and user authentication systems was a game changer. I was able to get hands on experience on all key components of a full stack project, including Postgres backend database for storing the CRUD operations data, and usage of Mailtrap for testing email services give insights on production level work. Working with Pydantic and Alembic helped me to paint a better picture of FastAPI application. Alembic made it easy to apply database version updates through migration strategy, and Pydantic enforced data validations for user inputs and respones. This helped in enforcing strict username/email and password validations and contributes to secure application.
+  
+  As for the end to end development, using comprehensive unit test to understand the edge cases which may not be caught by manual testing on UI, and the importance of writing clean and testable code. I myself found writing test cases as a difficult task for the code, but edge test cases would help to pinpoint how much efficent and robust the code is. Overall I find this assignment very interesting and gave me full exposure to the Python web api development.
+
+
 ## Assignment Objectives
 
 1. **Familiarize with REST API functionality and structure**: Gain hands-on experience working with a REST API, understanding its endpoints, request/response formats, and authentication mechanisms.
@@ -49,40 +84,6 @@ In this assignment, you will identify, document, and resolve five specific issue
 3. **Profile field edge cases**: Test and handle various scenarios related to updating profile fields. This may include updating the bio and profile picture URL simultaneously or individually. Consider different combinations of fields being updated and ensure that the API handles these cases gracefully. Edge case testing helps uncover potential issues and ensures a smooth user experience.
 
 Additionally, you will resolve a sixth issue demonstrated in the instructor video. These issues will test various combinations and scenarios to simulate real-world usage and potential edge cases. By addressing these specific issues, you will gain experience in identifying and resolving common challenges in API development.
-
-## Submission:
-
- ### Issues
-  - [Issue 1 - Password Validation](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/3) 
-      Added validations to the password to make it strong, pydantic data model support custom validations to have password being 8 chars, special chars etc - [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/4/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7)
-
-  - [Issue 2 -  Email validation](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/9)
-      In this project, the email is used as username, hence we check if the email is already registered in the system (uniqueness) and we have validations to make sure the username is a valid username -  [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/10/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7)
-
-  - [Issue 3 - Profile fields update validation function](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/11)
-      Added validations for the profile field update - put endpoint - to make sure all fields can be updated, and if update is made with no inputs, validtion error would be thrown back - [app/services/user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/12/files#diff-8e8622b7fd5979ba58404f96e1fd81c5512208dee6dbe0e28390d706055864e6)
-
-   - [Issue 4 - Profile fields update edge cases tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/7)
-        Added tests to cover for the edge cases for profile fields updation, and updated the validations accordingly 
-        [app/schemas/user_schemas.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/8/files#diff-b9e87a0161370245e876813f8f9823be535b73da8fbbba7ac126986a2c6a9cb7) and [tests/test_services/test_user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/8/files#diff-e3f3da0661632e0add5f28cb40266e4bfbd6e0c1a23cdb5f5e8813af69cf1d5c)
-
-  -  [Issue 5 - Updated smtp credentials and fixed tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/17)
-      Created mailtrap account, and added credentials to the .env file and completed the UI testing. For unit tests, added mocks to stimulate the smtp mock behavior - [tests/test_services/test_user_service.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-e3f3da0661632e0add5f28cb40266e4bfbd6e0c1a23cdb5f5e8813af69cf1d5c)
-
-  -  [Issue mentioned in the demo](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/issues/13) 
-        Tried out with LoginRequest pydantic model, and we could fix the issue by prefilling data, but it causes issue with oauth2_scheme for authorization endpoint for admin/managers. Hence continued using OAuth2PasswordRequestForm to capture email and password. Added desciptive for login - [app/routers/user_routes.py](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/14/files#diff-3f00ec2c24998d185e23313c030b5256c01c3b3e611ffb10c3c9437d4fa9cf77)
-  
-  -  Github action pass and dependency issues
-        Updated [flaky tests](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-e52e4ddd58b7ef887ab03c04116e676f6280b824ab7469d5d3080e5cba4f2128) which were intermittently failing and medium/ critical severity vulnerabilities [dependencies](https://github.com/Monica-Mathew/is601homework10-spring2025_event_manager/pull/18/files#diff-4d7c51b1efe9043e44439a949dfd92e5827321b34082903477fd04876edb7552)
-
-  ### Dockerhub image
-  - Link to project image deployed to Dockerhub.
-      [Dockerhub image - monicamathew/is601homework10](https://hub.docker.com/layers/monicamathew/is601homework10/688404ce97f69abbe53226ce206edfffb739461c/images/sha256-b2d49a53b89f8efd2f59ed019e919ccbb69037ee88b90014ef4a52f5c70175bf)
-
-  ### Reflection
-  This assignment was absolutely a great learning experience. As not having much experience with Python web development, usage of FastAPI and user authentication systems was a game changer. I was able to get hands on experience on all key components of a full stack project, including Postgres backend database for storing the CRUD operations data, and usage of Mailtrap for testing email services give insights on production level work. Working with Pydantic and Alembic helped me to paint a better picture of FastAPI application. Alembic made it easy to apply database version updates through migration strategy, and Pydantic enforced data validations for user inputs and respones. This helped in enforcing strict username/email and password validations and contributes to secure application.
-  
-  As for the end to end development, using comprehensive unit test to understand the edge cases which may not be caught by manual testing on UI, and the importance of writing clean and testable code. I myself found writing test cases as a difficult task for the code, but edge test cases would help to pinpoint how much efficent and robust the code is. Overall I find this assignment very interesting and gave me full exposure to the Python web api development.
 
 ## Grading Rubric
 
